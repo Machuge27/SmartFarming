@@ -10,7 +10,8 @@ from asgiref.sync import async_to_sync
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-        self.room_group_name='test'
+        self.room_group_name = 'test'
+        self.group_id = self.scope['url_route']['kwargs'].get('group_id')
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -29,6 +30,7 @@ class ChatConsumer(WebsocketConsumer):
         message=text_data_json['message']
 
         from .views import save_data
+        print("save data")
         msg=save_data(message)
         print('ndesaaa',msg.host.id)
         
@@ -50,13 +52,14 @@ class ChatConsumer(WebsocketConsumer):
                 'type':'chat',
                 'message':message.body,
                 'username':message.host.username,
+                'msg_host_id':message.host.id,
                 'time':str(message.created),
             })
         )
 
 class ChatDm(WebsocketConsumer)    :
     def connect(self):
-        self.room_group_name="test2"
+        self.room_group_name=self.scope['url_route']['kwargs']['group_id']
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -79,11 +82,12 @@ class ChatDm(WebsocketConsumer)    :
         data1 = private(data)
         print("Our dadta,",data1.body)
         async_to_sync(self.channel_layer.group_send)(
-            group_id,{
+            self.room_group_name,{
                 'type':'chat_message',
                 'message':data1.body,
             }
         )
+        
     def chat_message(self,event):
             print("sending the message")
             message=event['message']
@@ -91,7 +95,7 @@ class ChatDm(WebsocketConsumer)    :
             self.send(
                 text_data=json.dumps({
                     'type':'chat',
-                    'message':message.body,
+                    'message':message,
                 })
             )
 

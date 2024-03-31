@@ -55,10 +55,12 @@
     });
   });*/
 
+
+
 const chatSocket = new WebSocket(
   'ws://'
   + window.location.host
-  + '/ws/dm/'
+  + '/ws/dm/'+group_id+'/'
 );
 
 chatSocket.onopen = function (e) {

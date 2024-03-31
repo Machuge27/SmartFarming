@@ -3,7 +3,7 @@
 
 <div class="container">
     <div style="height: 100px;overflow-y: auto;background-color: azure;">
-        <p id="online">Online Users </p>
+        <p id="online">{{ username}} </p>
     </div>
     <div>     
         <div id="product-list">
@@ -33,7 +33,7 @@
     let user_id="{{ user1 }}"
     console.log('brian albert',user_id)
     let product_list=document.getElementById('product-list')
-    product_list.innerHTML='albert'
+    product_list.innerHTML="{{username}}"
 
         //make an ajax request to fetch data from the django bakcend
 
@@ -135,11 +135,11 @@ if('WebSocket' in window){
     var pl=document.getElementById('product-list')
     let el=document.getElementById('online')
     el.innerHTML='albert'
-    console.log(pl)
-    const time = new Date(message.time);
-
+    const time = new Date(message['time']);
+    console.log('yoyoyoyyoyoy',message['message'])
+    var linkUrl =`/dm/${user_id}/${message['msg_host_id']}/`;
     pl.insertAdjacentHTML(
-        'afterbegin','<div>'+message.message+' '+timesince(time)+' '+ '<a href="'+linkUrl+'">'+message.username+'</a>'+'</div>'
+        'afterbegin','<div>'+message['message']+' '+timesince(time)+' '+ '<a href="'+linkUrl+'">'+message['username']+'</a>'+'</div>'
     )
 };
 
@@ -154,9 +154,10 @@ chatSocket.onclose=function(e){
 function sendMessage(message){
     const msg=$('#chat-input').val()
     $('#chat-input').val('')
+    console.log("uyyyyyyyyyyyyyyyy")
     chatSocket.send(JSON.stringify({
         'message':msg,
-        'current-user':user,
+        'current-user':user_id,
         
         
     }));

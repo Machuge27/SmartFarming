@@ -8,6 +8,12 @@ from django.contrib import messages
 from django.core.serializers import serialize
 from django.core import serializers
 from .models import PrivateMessage
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import SensorData
+from django.shortcuts import render
+from .models import Message
 
 # Create your views here.
 @login_required(login_url='/Login')
@@ -55,11 +61,12 @@ def register_page(request):
                     messages.error(request, f"Error in {field}: {error}")
             # You can also pass the form instance with errors back to the template
     return render(request,'base/Login_page.html')
+ 
 @login_required(login_url='/Login')
 def chatts(request):
    global Cuser
    Cuser=request.user
-   return render(request,'base/chatts.html',{'user1':Cuser.id})
+   return render(request,'base/chatts.html',{'user1':Cuser.id,'username':Cuser.username})
 
 def Logout_user(request):
    logout(request)
@@ -67,12 +74,7 @@ def Logout_user(request):
 def Farm_data(request):
    return render(request,'base/Farm_data.html')
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .models import SensorData
-from django.shortcuts import render
-from .models import Message
+
 @csrf_exempt
 def data_analysis(request):
     if request.method == 'POST':

@@ -2,11 +2,6 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 
-#tukiwa free tutacode ile error na zile api ,,unaona hii text
-#sawa sawa use comments
-#we mzee tuanze tukisubiria chiqo
-#ANZENI BILA MM ,,,fty chiqo hapo chini kuna place imeandikwa chat click hapo
-
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -42,7 +37,7 @@ class ChatConsumer(WebsocketConsumer):
         )
     
     def chat_message(self,event):
-        print("sendin the message ")
+        print("sending the message ")
         message=event['message']
         print(message.created)
         print(message.host.username)

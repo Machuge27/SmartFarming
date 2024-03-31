@@ -97,9 +97,8 @@ def data_analysis(request):
         return render(request,'base/data_analysis')
     
 def fetchData(request):
-   print("mmmmmmmmmmmmmmmalbert")
    if request.method=='GET':
-      print("brian albert")
+      print("Fetching data 'Get'")
       data=Message.objects.all()
       
       data_msg=[]

@@ -1,0 +1,107 @@
+{%extends 'main.html'%}
+{%block content%}
+
+<div class="container">
+  <div id="product-list">
+
+  </div>
+
+
+
+
+
+  <div class="container chat-container" style="padding:3px;border-radius:10px;">
+    <form id="chat-form" method="POST">
+      {% csrf_token %}
+      <div class="input-group mb-3">
+        <input id="chat-input2" type="text" class="form-control" placeholder="Type your message......" name='text'
+          required>
+        <button class="btn btn-success" id="sbtn">Send</button>
+    </form>
+  </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+  const btn = document.getElementById('sbtn');
+  const group_id = "{{group_id}}";
+  const receiver = "{{receiver}}";
+  const sender = "{{sender}}";
+  console.log("rceivr ", receiver)
+
+/*  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const text = document.getElementById('chat-input2').value;
+    const textF = document.getElementById('chat-input2');
+    textF.value='';
+    console.log(text);
+    $.ajax({
+      type: 'POST',
+      url: "{% url 'private' %}",
+      data: {
+      'text': text,
+      'group_id': group_id,
+      'receiver': receiver,
+      'csrfmiddlewaretoken': '{{ csrf_token }}'
+    },
+      success: function (success) {
+        alert('success', success);
+      },
+      error: function (error) {
+        alert('error', error);
+      }
+    });
+  });*/
+
+const chatSocket = new WebSocket(
+  'ws://'
+  + window.location.host
+  + '/ws/dm/'
+);
+
+chatSocket.onopen = function (e) {
+  console.log('open', e);
+};
+
+chatSocket.onclose = function (e) {
+  console.error('Chat socket closed unexpectedly');
+};
+
+
+chatSocket.onerror = function (e) {
+  console.error('Closing Chat socket' + e);
+};
+
+chatSocket.onmessage=function (e) {
+  console.log('message', e);
+  const data = JSON.parse(e.data);
+  console.log('data', data);
+  const message = data['message'];
+ // const user = data['user'];
+ // const time = data['time'];
+  const chat = document.getElementById('product-list');
+  chat.innerHTML += `<div class="chat-message">
+  <p>${message}</p>
+  </div>`;
+};
+
+btn.addEventListener('click', function (e) {
+  e.preventDefault();
+  console.log('btn clicked');
+const text = document.getElementById('chat-input2').value;
+const textF = document.getElementById('chat-input2');
+textF.value='';
+console.log('Okay', group_id, receiver, sender, text);
+const data ={
+  'message': text,
+  'group_id': group_id,
+  'receiver_id': receiver,
+  'sender_id': sender,
+}
+chatSocket.send(JSON.stringify(data));
+});
+
+</script>
+{%endblock%}

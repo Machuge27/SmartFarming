@@ -1,0 +1,70 @@
+{% extends 'main.html'%}
+{% block content%}
+<!-- graph_template.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Graph</title>
+    <!-- Include your favorite graphing library, like Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // WebSocket connection
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/graph/');
+
+        socket.onopen = function(e) {
+            console.log('WebSocket connected');
+        }
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            updateChart(data);
+        };
+
+        socket.onclose = function(e) {
+            console.error('WebSocket closed unexpectedly');
+        };
+
+        // Chart initialization
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Data',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Function to update chart data
+        function updateChart(data) {
+            // Assuming data is a single value
+            myChart.data.labels.push(new Date().toLocaleTimeString());
+            myChart.data.datasets[0].data.push(data);
+            myChart.update();
+        }
+    </script>
+</body>
+</html>
+
+{% endblock%}

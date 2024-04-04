@@ -1,0 +1,62 @@
+<!-- login.html -->
+{% extends "base.html" %}
+{% block content %}
+<div id="login-container" style="height: 100vh; width: 83vw; background: url('https://images.nationalgeographic.org/image/upload/t_edhub_resource_key_image/v1638892233/EducationHub/photos/crops-growing-in-thailand.jpg') center center/cover no-repeat; display: flex; justify-content: center; align-items: center; animation: fadeIn 1s;">
+    <form method="post" style="color: white; width: 500px; padding: 20px; background: rgba(0, 0, 0, 0.7); border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+        <h2 class="text-center mb-4">Login</h2>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" style="color:white;background: transparent; border: none; border-bottom: 1px solid white; color: white; margin-bottom: 20px;">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" style="color:white;background: transparent; border: none; border-bottom: 1px solid white; color: white; margin-bottom: 20px;">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="background: #e64a19; border: none;">Login</button>
+        <p class="text-center mt-3"><a href="#" style="color: white;">Forgot your password?</a></p>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer mt-auto py-3">
+    <div class="container">
+        <span class="text-muted">This is the footer content. You can add any additional information or links here.</span>
+    </div>
+</footer>
+{% endblock %}
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes moveBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    #login-container {
+        animation: moveBackground 15s infinite alternate;
+    }
+
+    /* Additional styles for better readability */
+    form {
+        text-align: center;
+    }
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+</style>

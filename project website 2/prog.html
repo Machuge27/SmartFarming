@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circular Progress Bar</title>
+  <style>
+    *,
+    *:before,
+    *:after {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+
+    .container {
+      width: 80%;
+      background-color: #ffffff;
+      top: 50%;
+      left: 50%;
+      border-radius: 8px;
+      box-shadow: 20px 20px 40px rgba(60, 60, 150, 0.25);
+      display: grid;
+      place-items: center;
+      grid-template-columns: auto auto auto;
+      border: 1px solid red;
+      height: auto;
+      width: auto;
+    }
+
+    @media(max-width:450px) {
+      .container {
+        grid-template-columns: auto;
+      }
+    }
+
+    .circular-progress {
+      position: relative;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      width: 160px;
+      height: 160px;
+      margin: 10px;
+    }
+
+    .circular-progress:before {
+      content: "";
+      position: absolute;
+      height: 84%;
+      width: 84%;
+      background-color: #ffffff;
+      border-radius: 50%;
+      width: 140px;
+      height: 140px;
+    }
+
+    .value-container {
+      position: relative;
+      font-family: "Poppins", sans-serif;
+      font-size: 20px;
+      color: #231c3d;
+    }
+
+    p {
+      font-family: "Poppins", sans-serif;
+      font-size: 20px;
+      color: #231c3d;
+      z-index: 100;
+    }
+  </style>
+  <!-- Gooogle Font -->
+  <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
+      rel="stylesheet"
+    /> -->
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="circular-progress">
+      <p style="color: black;">Tempareture</p>
+      <div class="value-container">0%</div>
+    </div>
+    <div class="circular-progress">
+      <p style="color: black;">Humidity</p>
+      <div class="value-container">0%</div>
+    </div>
+    <div class="circular-progress">
+      <p style="color: black;">Moisture</p>
+      <div class="value-container">0%</div>
+    </div>
+  </div>
+  <!-- Script -->
+  <!-- <script src="script.js"></script> -->
+  <script>
+    let progressBar = document.querySelector(".circular-progress");
+    let valueContainer = document.querySelector(".value-container");
+
+    let progressValue = 0;
+    let progressEndValue = 20;
+    let speed = 50;
+
+    let progress = setInterval(() => {
+      progressValue++;
+      valueContainer.textContent = progressValue + "%";
+      progressBar.style.background = `conic-gradient(
+          #4d5bf9 ${progressValue * 3.6}deg,
+          #cadcff ${progressValue * 3.6}deg
+      )`;
+      if (progressValue == progressEndValue) {
+        clearInterval(progress);
+      }
+    }, speed);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+{% extends "base.html"%}
+{%block content%}
+<style>
+  /* Adjust height of chat area and input area as per your requirement */
+  .chat-area {
+      height: calc(100vh - 200px); /* Set a fixed height or use max-height */
+      overflow-y: auto; /* Enable vertical scrolling */
+      background-color: #f5f5f5; /* Set background color */
+      border-radius: 10px;
+      padding: 10px;
+  }
+  .input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      padding: 15px;
+      border-top: 1px solid #ccc;
+      box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+      transition: all 0.3s ease; /* Add transition for smooth animation */
+  }
+
+  .input-area:hover {
+      background-color: #f8f9fa; /* Change background color on hover */
+  }
+
+  /* Style for message bubble */
+  .message {
+      background-color: #007bff;
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+  }
+
+  /* Background style */
+  body {
+      background: linear-gradient(to bottom right, #FFD700, #FF8C00); /* Example gradient background */
+      margin: 0;
+      padding: 0;
+  }
+</style>
+</head>
+<body>
+  <h3>Community Chat</h3>
+<div class="container mt-5" style="background-color: antiquewhite;">
+  <a href="{{url_for('views.home')}}"><span>Ground Data</span></a>
+  <a href="">Irrigation Data</a>
+  <div class="row">
+      <div class="col-md-8 mx-auto">
+          <div id="chat-area" class="chat-area border rounded p-3 mb-3">
+              <!-- Chat messages will be displayed here -->
+              {% for message in messages%}
+              <div id="msg_div" class="message">
+               <span id="user_details">@{{message.author.first_name}}  - {{message.date|time_ago}}</span>
+               <br>
+                 <div id="message_div">{{message.data}}</div>
+              </div>
+              {%endfor%}
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Input area for sending messages -->
+<div class="input-area">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-8 mx-auto">
+              <form id="my_form">
+                  <div class="input-group">
+                      <input id="my_input" type="text" class="form-control" placeholder="Type your message here..." aria-label="Message" name="message">
+                      <div class="input-group-append">
+                          <button id="my_button" class="btn btn-primary" type="submit">Send</button>
+                      </div>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script>
+  var socket=io()
+
+ socket.on('message',function(data){
+    console.log(data.body)
+    const chat_area=document.getElementById('chat-area')
+    const my_div=document.createElement('div')
+    my_div.classList.add('message')
+    my_div.setAttribute('id','msg_div')
+    my_div.innerHTML+=
+
+     `       
+            <span id="user-details">@${data.username} - ${data.created}</span>
+            <br>
+            <div id="message-div">${data.body}</div>
+        `;
+    
+   chat_area.insertBefore(my_div,chat_area.firstChild)
+ })
+
+ 
+  const my_form=document.getElementById('my_form')
+  my_form.addEventListener('submit',function(e){
+    e.preventDefault()
+  const my_input=document.getElementById('my_input')
+  const text=my_input.value.trim()
+  if (text !== ''){
+  console.log('my message',text)
+  socket.emit('message',text)
+  my_input.value=''
+  }
+
+
+  })
+
+</script>
+{%endblock%}

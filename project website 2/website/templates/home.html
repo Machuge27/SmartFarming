@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!--Graph libraries-->
+
+    <!-- Include necessary libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f7;
+        /* Soft blue-gray background */
+        height:100dvh;
+        width:90%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        /* White background */
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        /* Dark gray */
+    }
+
+    .welcome {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .welcome h2 {
+        font-size: 24px;
+        color: #444;
+        /* Slightly darker gray */
+    }
+
+    .links {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .links a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #007bff;
+        /* Blue */
+        font-size: 18px;
+    }
+
+    .links a:hover {
+        text-decoration: underline;
+    }
+
+    .data {
+        margin-top: 30px;
+    }
+
+    .data_item {
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f5f5f5;
+        /* Light gray */
+        margin-bottom: 10px;
+    }
+
+    .data_item i {
+        color: #007bff;
+        /* Blue */
+        margin-right: 5px;
+    }
+
+    .user-info {
+        margin-top: 50px;
+        text-align: center;
+        letter-spacing: 1px;
+        /* Adding spacing between words */
+    }
+
+    .user-info p {
+        font-size: 16px;
+        color: #555;
+        /* Dark gray */
+    }
+
+    *,
+    *:before,
+    *:after {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+
+    .container1 {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 20px 20px 40px rgba(60, 60, 150, 0.25);
+        place-items: center;
+        height: 100%;
+        width: auto;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    @media(max-width:450px) {
+        .container1{
+          grid-template-columns: auto;
+        }
+      }
+
+    .circular-progress {
+        position: relative;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        width: 160px;
+        height: 160px;
+        margin: 10px;
+    }
+
+    .circular-progress:before {
+        content: "";
+        position: absolute;
+        height: 84%;
+        width: 84%;
+        background-color: #ffffff;
+        border-radius: 50%;
+        width: 140px;
+        height: 140px;
+    }
+
+    .value-container {
+        position: relative;
+        font-family: "Poppins", sans-serif;
+        font-size: 20px;
+        color: #231c3d;
+    }
+
+    p {
+        font-family: "Poppins", sans-serif;
+        font-size: 20px;
+        color: #231c3d;
+        z-index: 100;
+        padding: 30px 10px 0;
+    }
+
+    .chart {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        grid-template-columns: auto auto;
+        margin-top: 20px;
+        border: 2px solid yellow;
+        width:100%;
+        height:auto;
+    }
+
+
+    @media(max-width:750px) {
+        .chart {
+          grid-template-columns: auto;
+        }
+      }
+
+    .Echart {
+        margin: 10px;
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        margin-top: 20px;
+        min-width: 800px;
+    }
+    #myChart {
+        width: 100%;
+        height: 100%;
+        border: 2px solid red;
+    }
+    .ch {
+        width:100%;
+    }
+</style>
+</head>
+
+<body>
+    <div id="header"></div><br>
+
+    <div class="container">
+        <div>
+            <div class="welcome">
+                <h2>Welcome, {{ user.first_name }}</h2>
+            </div>
+            <div class="links">
+                {% if user.is_authenticated %}
+                <a href="{{ url_for('views.messages') }}">Chats</a>
+                <a href="#">Real-time Data</a><br>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- <p style="text-align: center;">Display user information</p></div>
+        <div class="data">
+            {% if arduino_data %}
+                <div id="temperature">Temperature: {{ arduino_data.temp }}</div>
+                <div id="humidity">Humidity: {{ arduino_data.humidity }}</div>
+                <div id="moisture">Moisture: {{ arduino_data.moisture }}</div>
+            {% endif %}
+        </div>-->
+        <div class="cont2">
+            <div class="container1">
+                <div class="circular-progress circular-progress1 ">
+                    <p style="color: black;">Tempareture</p>
+                    <div class="value-container value-container1">0%</div>
+                </div>
+                <div class="circular-progress circular-progress2">
+                    <p style="color: black;">Humidity</p>
+                    <div class="value-container value-container2">0%</div>
+                </div>
+                <div class="circular-progress circular-progress3">
+                    <p style="color: black;">Moisture</p>
+                    <div class="value-container value-container3">0%</div>
+                </div>
+            </div>
+        </div>
+        <div class="chart">
+            <div class="Echart">
+                <p>Temp</p>
+                <div class="ch">
+                    <canvas id="myChart" class="myChart1" ></canvas>
+                </div>
+            </div>
+            <div class="Echart">
+                <p>Humidity</p>
+                <div class="ch">
+                    <canvas id="myChart" class="myChart2" ></canvas>
+                </div>
+            </div>
+            <div class="Echart">
+                <p>Moisture</p>
+                <div class="ch">
+                    <canvas id="myChart" class="myChart3" ></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script>
+
+        //const socket = io.connect('http://localhost:5000/messages');Here, the '/messages' namespace is specified, and the script will connect to the SocketIO server at http://localhost:5000 using the '/messages' namespace
+
+
+        var socket = io() // Connect to your Flask server
+        socket.on('update_data', function (data) {
+            console.log(data)
+            document.getElementById('header').innerHTML = "<h3>" + "Websocket Connected" + "</h3";
+
+            console.log('Received data from Arduino:', data);
+            temp(data.temp);
+            humid(data.humidity);
+            moisture(data.moisture);
+
+        });
+
+
+        fetch("/initialData")
+            .then((response) => response.json())  // Parse the JSON data
+            .then((data) => {
+                console.log(data)
+                temp(data.temp);
+                humid(data.humidity);
+                moisture(data.moisture);
+            }).catch((error) => console.error("Error fetching data:", error));
+
+
+
+        /*
+            Graph To Display Data Trend
+        */
+        fetch("/fetchData")
+            .then((response) => response.json())
+            .then((data) => {
+                const data_temp = data[0]
+                const data_humidity = data[1]
+                const data_moisture = data[2]
+                console.log(data_temp, data_moisture, data_humidity)
+                drawGraph1(data[0]);
+                drawGraph2(data[1]);
+                drawGraph3(data[2]);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+        data = {
+            "labels": [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "august",
+            ],
+            "values": [65, 59, 80, 81, 56, 55, 50, 10],
+        }
+        function drawGraph1(data) {
+
+            var ctx = document.querySelector(".myChart1").getContext("2d");
+            var myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Data",
+                        data: data.values,
+                        borderColor: "rgb(75, 192, 192)",
+                        tension: 0.1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+
+        function drawGraph2(data) {
+
+            var ctx = document.querySelector(".myChart2").getContext("2d");
+            var myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Data",
+                        data: data.values,
+                        borderColor: "rgb(75, 192, 192)",
+                        tension: 0.1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+        function drawGraph3(data) {
+
+            var ctx = document.querySelector(".myChart3").getContext("2d");
+            var myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Data",
+                        data: data.values,
+                        borderColor: "rgb(75, 192, 192)",
+                        tension: 0.1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+
+        function temp(element) {
+            let progressBar = document.querySelector(".circular-progress1");
+            let valueContainer = document.querySelector(".value-container1");
+
+            let progressValue = 0;
+            let progressEndValue = element;
+            let speed = 50;
+
+            let progress = setInterval(() => {
+                progressValue++;
+                valueContainer.textContent = progressValue + "%";
+                progressBar.style.background = `conic-gradient(
+          #4d5bf9 ${progressValue * 3.6}deg,
+          #cadcff ${progressValue * 3.6}deg
+      )`;
+                if (progressValue == progressEndValue) {
+                    clearInterval(progress);
+                }
+            }, speed);
+        }
+
+        function humid(element) {
+            let progressBar = document.querySelector(".circular-progress2");
+            let valueContainer = document.querySelector(".value-container2");
+
+            let progressValue = 0;
+            let progressEndValue = element;
+            let speed = 50;
+
+            let progress = setInterval(() => {
+                progressValue++;
+                valueContainer.textContent = progressValue + "%";
+                progressBar.style.background = `conic-gradient(
+          #4d5bf9 ${progressValue * 3.6}deg,
+          #cadcff ${progressValue * 3.6}deg
+      )`;
+                if (progressValue == progressEndValue) {
+                    clearInterval(progress);
+                }
+            }, speed);
+        }
+        function moisture(element) {
+            let progressBar = document.querySelector(".circular-progress3");
+            let valueContainer = document.querySelector(".value-container3");
+
+            let progressValue = 0;
+            let progressEndValue = element;
+            let speed = 50;
+
+            let progress = setInterval(() => {
+                progressValue++;
+                valueContainer.textContent = progressValue + "%";
+                progressBar.style.background = `conic-gradient(
+          #4d5bf9 ${progressValue * 3.6}deg,
+          #cadcff ${progressValue * 3.6}deg
+      )`;
+                if (progressValue == progressEndValue) {
+                    clearInterval(progress);
+                }
+            }, speed);
+        }
+
+    </script>
+</body>
+
+</html>
